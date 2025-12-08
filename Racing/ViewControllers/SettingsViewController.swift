@@ -304,7 +304,7 @@ class SettingsViewController: UIViewController {
             text.isEmpty == false {
             nameTextField.text = text
         } else {
-            nameTextField.text = "Player"
+            nameTextField.text = "Player" // новые изменения 
         }
     }
     
