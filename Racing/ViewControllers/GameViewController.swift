@@ -151,6 +151,8 @@ class GameViewController: UIViewController {
         return label
     }()
     
+    private let saveManager = SaveLoadManager()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,6 +168,8 @@ class GameViewController: UIViewController {
     private func cofigureUI() {
         view.backgroundColor = .systemBackground
         
+        let settings = saveManager.loadSettings()
+        let playerName = settings?.name ?? "Player"
         
         //MARK: - Road
         view.addSubview(roadImage)
@@ -357,6 +361,7 @@ class GameViewController: UIViewController {
         let newX = carImageView.center.x - carStep
         if newX <= mainConteiner.frame.minX + 30 {
             gameTimer.invalidate()
+            self.saveRaceRecord()
             self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: { self.restGame()})
             return
         }
@@ -374,6 +379,7 @@ class GameViewController: UIViewController {
             let newX = self.carImageView.center.x - self.carStepSlowX
             if newX <= self.mainConteiner.frame.minX + 30 {
                 self.gameTimer.invalidate()
+                self.saveRaceRecord()
                 self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
                 return
             }
@@ -413,6 +419,7 @@ class GameViewController: UIViewController {
         let newX = carImageView.center.x + carStep
         if newX >= mainConteiner.frame.maxX - 30 {
             self.gameTimer.invalidate()
+            self.saveRaceRecord()
             self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
             return
         }
@@ -429,6 +436,7 @@ class GameViewController: UIViewController {
             let newX = self.carImageView.center.x + self.carStepSlowX
             if newX >= self.mainConteiner.frame.maxX - 30 {
                 self.gameTimer.invalidate()
+                self.saveRaceRecord()
                 self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
                 return
             }
@@ -502,7 +510,21 @@ class GameViewController: UIViewController {
         timer.fire()
     }
     
-    
+   
+    private func saveRaceRecord() {
+        let time  = Int(numberOfTime.text ?? "0") ?? 0
+        
+        let settings = saveManager.loadSettings()
+        let playerName = settings?.name ?? "Player"
+        
+        let newRecord = RaceRecord(playerName: playerName, time: time)
+        
+        var records = saveManager.loadRecords() // загрузка сохраненных к нему добавляем новый рекорд и сортируем по убыванию
+        records.append(newRecord)
+        records.sort { $0.time > $1.time}  // нужно ли вторая тут сортировка 
+        
+        saveManager.saveRecords(records)
+    }
     
     
     
