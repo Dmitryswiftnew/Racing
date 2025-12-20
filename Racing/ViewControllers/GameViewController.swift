@@ -9,9 +9,9 @@ class GameViewController: UIViewController {
     private var roadTimer = Timer()
     private var carStepSlowX: CGFloat = 30
     private var carStep: CGFloat = 5
-    
     private var stepForRoad: CGFloat = 5.0
     
+
     private let buttonBack: UIButton = {
         let button = UIButton()
         button.setTitle("Back", for: .normal)
@@ -21,7 +21,7 @@ class GameViewController: UIViewController {
     
     private let roadImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+//        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         return imageView
@@ -29,7 +29,7 @@ class GameViewController: UIViewController {
     
     private let roadImageSecond: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFill
+//        image.contentMode = .scaleAspectFit
         image.clipsToBounds = true
         image.isUserInteractionEnabled = true
         return image
@@ -43,7 +43,7 @@ class GameViewController: UIViewController {
     
     private let numberOfScore: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textColor = .white
         label.text = "0"
         return label
@@ -52,7 +52,7 @@ class GameViewController: UIViewController {
     private let numberOfTime: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.text = "0"
         return label
     }()
@@ -144,12 +144,14 @@ class GameViewController: UIViewController {
     
     private let startTimeLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
-        //        label.backgroundColor = .lightGray
-        label.font = .systemFont(ofSize: 100, weight: .bold)
+        label.textColor = UIColor(red: 225 / 255, green: 169 / 255, blue: 58 / 255, alpha: 1)
+        label.font = UIFont(name: "Montserrat-Regular", size: 100)
+//        label.font = .systemFont(ofSize: 80, weight: .bold)
         label.textAlignment = .center
         return label
     }()
+    
+    private let saveManager = SaveLoadManager()
     
     
     override func viewDidLoad() {
@@ -157,8 +159,9 @@ class GameViewController: UIViewController {
         cofigureUI()
         leftLongPressed()
         rightLongPressed()
-        moveAnimationForRoad()
+//        moveAnimationForRoad()
         startTimeCount()
+        
     }
     
     // MARK: - Configure UI
@@ -166,10 +169,12 @@ class GameViewController: UIViewController {
     private func cofigureUI() {
         view.backgroundColor = .systemBackground
         
+        let settings = saveManager.loadSettings()
+        let playerName = settings?.name ?? "Player"
         
         //MARK: - Road
         view.addSubview(roadImage)
-        roadImage.image = UIImage(named: "road2")
+        roadImage.image = UIImage(named: "roadE")
         roadImage.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.left.right.equalToSuperview()
@@ -177,11 +182,15 @@ class GameViewController: UIViewController {
         }
         
         view.addSubview(roadImageSecond)
-        roadImageSecond.image = UIImage(named: "road2")
+        roadImageSecond.image = UIImage(named: "roadE")
         roadImageSecond.snp.makeConstraints { make in
-            make.top.equalTo(roadImage.snp.bottom)
-            make.right.left.equalToSuperview()
+//            make.top.equalTo(roadImage.snp.bottom)
+//            make.right.left.equalToSuperview()
+//            make.height.equalToSuperview()
+//            
+            make.bottom.equalTo(view.snp.top)
             make.height.equalToSuperview()
+            make.width.equalToSuperview()
         }
         
         view.addSubview(mainConteiner)
@@ -192,7 +201,7 @@ class GameViewController: UIViewController {
         mainConteiner.addSubview(startTimeLabel)
         startTimeLabel.snp.makeConstraints { make in
             make.centerX.centerY.equalTo(mainConteiner)
-            make.width.height.equalTo(80)
+            make.width.height.equalTo(200)
         }
         
         
@@ -314,33 +323,65 @@ class GameViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    private func moveAnimationForRoad() {
-        roadTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) {
-            timer in
-            self.moveRoad()
-            
+    func roadAnimate() {
+        self.roadImage.snp.remakeConstraints { make in
+            make.top.equalTo(view.snp.bottom)
+            make.height.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+        self.roadImageSecond.snp.remakeConstraints { make in
+            make.left.equalToSuperview()
+            make.top.equalToSuperview()
+            make.right.equalToSuperview()
+            make.height.equalToSuperview()
+        }
+        UIView.animate(withDuration: 3,
+                       delay: 0,
+                       options: [.curveLinear, .repeat]) {
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.roadImage.snp.remakeConstraints { make in
+                make.left.equalToSuperview()
+                make.top.equalToSuperview()
+                make.right.equalToSuperview()
+            }
+            self.roadImageSecond.snp.remakeConstraints { make in
+                make.bottom.equalTo(self.view.snp.top)
+                make.height.equalToSuperview()
+                make.width.equalToSuperview()
+            }
         }
     }
     
+ 
+    // - MARK: Move road
+//    private func moveAnimationForRoad() {
+//        roadTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) {
+//            timer in
+//            self.moveRoad()
+//            
+//        }
+//    }
+
+//    func moveRoad() {
+//        // Двигаем
+//        roadImage.frame.origin.y += stepForRoad
+//        roadImageSecond.frame.origin.y += stepForRoad
+//        
+//        // Если верхний край первой картинки достиг низа экрана
+//        if roadImage.frame.origin.y >= view.frame.height {
+//            // Ставим ее под второй картинкой
+//            roadImage.frame.origin.y = roadImageSecond.frame.origin.y - view.frame.height
+//        }
+//        
+//        // Если верхний край второй картинки достиг низа экрана
+//        if roadImageSecond.frame.origin.y >= view.frame.height {
+//            // Ставим ее под первой картинкой
+//            roadImageSecond.frame.origin.y = roadImage.frame.origin.y - view.frame.height
+//        }
+//    }
     
     
-    func moveRoad() {
-        // Двигаем
-        roadImage.frame.origin.y += stepForRoad
-        roadImageSecond.frame.origin.y += stepForRoad
-        
-        // Если верхний край первой картинки достиг низа экрана
-        if roadImage.frame.origin.y >= view.frame.height {
-            // Ставим ее под второй картинкой
-            roadImage.frame.origin.y = roadImageSecond.frame.origin.y - view.frame.height
-        }
-        
-        // Если верхний край второй картинки достиг низа экрана
-        if roadImageSecond.frame.origin.y >= view.frame.height {
-            // Ставим ее под первой картинкой
-            roadImageSecond.frame.origin.y = roadImage.frame.origin.y - view.frame.height
-        }
-    }
     
     func leftLongPressed() {  //  Button left
         let action = UIAction { _ in
@@ -357,6 +398,7 @@ class GameViewController: UIViewController {
         let newX = carImageView.center.x - carStep
         if newX <= mainConteiner.frame.minX + 30 {
             gameTimer.invalidate()
+            self.saveRaceRecord()
             self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: { self.restGame()})
             return
         }
@@ -374,6 +416,7 @@ class GameViewController: UIViewController {
             let newX = self.carImageView.center.x - self.carStepSlowX
             if newX <= self.mainConteiner.frame.minX + 30 {
                 self.gameTimer.invalidate()
+                self.saveRaceRecord()
                 self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
                 return
             }
@@ -413,6 +456,7 @@ class GameViewController: UIViewController {
         let newX = carImageView.center.x + carStep
         if newX >= mainConteiner.frame.maxX - 30 {
             self.gameTimer.invalidate()
+            self.saveRaceRecord()
             self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
             return
         }
@@ -429,6 +473,7 @@ class GameViewController: UIViewController {
             let newX = self.carImageView.center.x + self.carStepSlowX
             if newX >= self.mainConteiner.frame.maxX - 30 {
                 self.gameTimer.invalidate()
+                self.saveRaceRecord()
                 self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
                 return
             }
@@ -487,22 +532,44 @@ class GameViewController: UIViewController {
         startTimeLabel.isHidden = false
         var second = 4
         
-        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [self] timer in
             second -= 1
             self.startTimeLabel.pulseAnimation()
             self.startTimeLabel.text = "\(second)"
             
-            if second <= 0 {
+            
+            if second > 0 {
+                self.startTimeLabel.text = "\(second)"
+                self.startTimeLabel.pulseAnimation()
+            } else if second == 0 {
+                self.startTimeLabel.text = "GO!"
+                self.startTimeLabel.pulseAnimation()
+            } else {
                 timer.invalidate()
                 self.startTimeLabel.isHidden = true
                 self.mainTimeCount()
+                self.roadAnimate()
             }
         }
         
         timer.fire()
     }
     
-    
+   
+    private func saveRaceRecord() {
+        let time  = Int(numberOfTime.text ?? "0") ?? 0
+        
+        let settings = saveManager.loadSettings()
+        let playerName = settings?.name ?? "Player"
+        
+        let newRecord = RaceRecord(playerName: playerName, time: time, date: Date())
+        
+        var records = saveManager.loadRecords() // загрузка сохраненных к нему добавляем новый рекорд и сортируем по убыванию
+        records.append(newRecord)
+        records.sort { $0.time > $1.time}  // нужно ли вторая тут сортировка 
+        
+        saveManager.saveRecords(records)
+    }
     
     
     
