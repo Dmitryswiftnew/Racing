@@ -6,7 +6,12 @@ import SnapKit
 class SettingsViewController: UIViewController {
     
     let screenHeight = UIScreen.main.bounds.height
-  
+    private let availableCars = ["CarCamaro", "Mustang", "P"]
+    private let availableObjects = ["bin", "mark100"]
+    
+    private var currentCarIndex = 0
+    private var currentObjectIndex = 0
+    
     
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
@@ -38,8 +43,8 @@ class SettingsViewController: UIViewController {
     
     private let carImage: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFill
-        image.backgroundColor = .brown
+        image.contentMode = .scaleAspectFit
+//        image.backgroundColor = .brown
         return image
     }()
     
@@ -59,10 +64,10 @@ class SettingsViewController: UIViewController {
         return button
     }()
     
-    private let imageObject: UIImageView = {
+    private let objectImage: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFill
-        image.backgroundColor = .yellow
+        image.contentMode = .scaleAspectFit
+//        image.backgroundColor = .yellow
         return image
     }()
     
@@ -84,22 +89,22 @@ class SettingsViewController: UIViewController {
     
     private let profileConteiner: UIView = {
         let view = UIView()
-        //        view.backgroundColor = .white
-        //        view.alpha = 0.3
+//                view.backgroundColor = .white
+//                view.alpha = 0.3
         return view
     }()
     
     private let carConteiner: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
-        view.alpha = 0.3
+//        view.backgroundColor = .red
+//        view.alpha = 0.3
         return view
     }()
     
     private let roadObjectContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
-        view.alpha = 0.3
+//        view.backgroundColor = .green
+//        view.alpha = 0.3
         return view
     }()
     
@@ -188,7 +193,7 @@ class SettingsViewController: UIViewController {
         }
         
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeboard)) // запихнуть в отдельную функцию
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)) // запихнуть в отдельную функцию
         mainContainerView.addGestureRecognizer(tapGesture)
         
         profileConteiner.addSubview(photoImage)
@@ -244,6 +249,10 @@ class SettingsViewController: UIViewController {
             make.left.equalToSuperview()
         }
         
+        let actionCarLeft = UIAction { _ in
+            self.leftCarButtonPressed()
+        }
+        buttonCarLeft.addAction(actionCarLeft, for: .touchUpInside)
         
         carConteiner.addSubview(buttonCarRight)
         buttonCarRight.snp.makeConstraints { make in
@@ -251,8 +260,13 @@ class SettingsViewController: UIViewController {
             make.right.equalToSuperview()
         }
         
-        roadObjectContainer.addSubview(imageObject)
-        imageObject.snp.makeConstraints { make in
+        let actionCarRight = UIAction { _ in
+            self.rightCarButtonPressed()
+        }
+        buttonCarRight.addAction(actionCarRight, for: .touchUpInside)
+        
+        roadObjectContainer.addSubview(objectImage)
+        objectImage.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(1.0 / 3.0)
@@ -266,15 +280,28 @@ class SettingsViewController: UIViewController {
         }
         
         
+        let actionObjectLeft = UIAction { _ in
+            self.leftObjectButtonPressed()
+        }
+        buttonObjectLeft.addAction(actionObjectLeft, for: .touchUpInside)
+        
         roadObjectContainer.addSubview(buttonObjectRight)
         buttonObjectRight.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.right.equalToSuperview()
         }
         
+        let actionObjectRight = UIAction { _ in
+            self.rightObjectButtonPressed()
+        }
+        buttonObjectRight.addAction(actionObjectRight, for: .touchUpInside)
+        
+        
     }
     
     func backButtonPressed() {
+    
+        
         if let text = nameTextField.text,
            text.isEmpty {
             nameTextField.text = "Player"
@@ -282,10 +309,13 @@ class SettingsViewController: UIViewController {
         navigationController?.popViewController(animated: true)
         //        self.savePressed()
         self.saveCurrentSettings()
+//        guard let text = saveManager.loadSettings() else { return }
+//        print(text.name)
+        
     }
     
     
-    @objc func hideKeboard(_ gesture: UITapGestureRecognizer) {
+    @objc func hideKeyboard(_ gesture: UITapGestureRecognizer) {
         
         //        let location = gesture.location(in: profileConteiner)
         
@@ -318,13 +348,18 @@ class SettingsViewController: UIViewController {
     
     
     func loadSettings() {
+        
+        
         if let settings = saveManager.loadSettings() {
             self.playerSettings = settings
-            
             nameTextField.text = settings.name
             
+            
             carImage.image = UIImage(named: settings.carName)
-            imageObject.image = UIImage(named: settings.objectName)
+            objectImage.image = UIImage(named: settings.objectName)
+            
+            currentCarIndex = availableCars.firstIndex(of: settings.carName) ?? 0
+            currentObjectIndex = availableObjects.firstIndex(of: settings.objectName) ?? 0
             
             
         } else {
@@ -333,7 +368,7 @@ class SettingsViewController: UIViewController {
             self.playerSettings = defaultSettings
             nameTextField.text = defaultSettings.name
             carImage.image = UIImage(named: defaultSettings.carName)
-            imageObject.image = UIImage(named: defaultSettings.objectName)
+            objectImage.image = UIImage(named: defaultSettings.objectName)
         }
         
     }
@@ -398,8 +433,40 @@ class SettingsViewController: UIViewController {
         }
     }
     
+    // - MARK: shuffle buttons
+    func leftCarButtonPressed() {
+        currentCarIndex = (currentCarIndex - 1 + availableCars.count) % availableCars.count
+        playerSettings.carName = availableCars[currentCarIndex]
+        carImage.image = UIImage(named: playerSettings.carName)
+        
+    }
+    
+    func rightCarButtonPressed() {
+        currentCarIndex = (currentCarIndex + 1) % availableCars.count
+        playerSettings.carName = availableCars[currentCarIndex]
+        carImage.image = UIImage(named: playerSettings.carName)
+    }
+    
+    
+    func leftObjectButtonPressed() {
+        currentObjectIndex = (currentObjectIndex - 1 + availableObjects.count) % availableObjects.count
+        playerSettings.objectName = availableObjects[currentObjectIndex]
+        objectImage.image = UIImage(named: playerSettings.objectName)
+    }
+    
+    func rightObjectButtonPressed() {
+        currentObjectIndex = (currentObjectIndex + 1) % availableObjects.count
+        playerSettings.objectName = availableObjects[currentObjectIndex]
+        objectImage.image = UIImage(named: playerSettings.objectName)
+    }
+    
+    
     
 }
+
+
+
+
 
 
 extension SettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

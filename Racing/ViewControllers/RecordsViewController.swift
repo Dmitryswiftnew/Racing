@@ -40,7 +40,7 @@ class RecordsViewController: UIViewController {
     private let numberLabel: UILabel = {
         let label = UILabel()
         label.text = "№"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -50,7 +50,7 @@ class RecordsViewController: UIViewController {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "NAME"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -59,7 +59,7 @@ class RecordsViewController: UIViewController {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.text = "TIME"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -69,7 +69,7 @@ class RecordsViewController: UIViewController {
     private let numberOneLabel: UILabel = {
         let label = UILabel()
         label.text = "1"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -78,7 +78,7 @@ class RecordsViewController: UIViewController {
     private let numberTwoLabel: UILabel = {
         let label = UILabel()
         label.text = "2"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -88,7 +88,7 @@ class RecordsViewController: UIViewController {
     private let nameOneLabel: UILabel = {
         let label = UILabel()
         label.text = "name"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -97,7 +97,7 @@ class RecordsViewController: UIViewController {
     private let nameTwoLabel: UILabel = {
         let label = UILabel()
         label.text = "name2"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -109,7 +109,7 @@ class RecordsViewController: UIViewController {
     private let timeOneLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -118,11 +118,43 @@ class RecordsViewController: UIViewController {
     private let timeTwoLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.font = UIFont(name: "Montserrat-Regular", size: 30)
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
         label.textAlignment = .center
         label.textColor = .white
         return label
     }()
+    
+    
+    private let dataLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Data"
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
+        label.textAlignment = .center
+        label.textColor = .white
+        return label
+    }()
+    
+    
+    private let dataLabelPlayerOne: UILabel = {
+        let label = UILabel()
+        label.text = "-- -- --"
+        label.font = UIFont(name: "Montserrat-Regular", size: 15)
+        label.textAlignment = .right
+        label.numberOfLines = 3
+        label.textColor = .white
+        return label
+    }()
+    
+    
+    // - MARK: Formate Date
+    private let recordDateFormater: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH:mm"
+        formatter.locale = Locale.current
+        return formatter
+    }()
+    
+    
     
     private let manager = SaveLoadManager()
     private var records: [RaceRecord] = []
@@ -152,8 +184,8 @@ class RecordsViewController: UIViewController {
         mainContainer.addSubview(boardContainer)
         boardContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(100)
-            make.left.equalToSuperview().offset(16)
-            make.right.equalToSuperview().inset(16)
+            make.left.equalToSuperview()
+            make.right.equalToSuperview()
             make.bottom.equalToSuperview().inset(100)
             
         }
@@ -170,14 +202,14 @@ class RecordsViewController: UIViewController {
         boardContainer.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.centerX.equalToSuperview()
+            make.left.equalTo(numberLabel).offset(100)
             make.height.equalTo(numberLabel)
         }
         
         boardContainer.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.right.equalToSuperview()
+            make.left.equalTo(nameLabel).offset(120)
             make.height.equalTo(30)
         }
         
@@ -198,7 +230,7 @@ class RecordsViewController: UIViewController {
         boardContainer.addSubview(nameOneLabel)
         nameOneLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(80)
-            make.centerX.equalToSuperview()
+            make.left.equalTo(numberOneLabel).offset(100)
             make.width.height.equalTo(nameOneLabel)
         }
         
@@ -212,7 +244,7 @@ class RecordsViewController: UIViewController {
         boardContainer.addSubview(timeOneLabel)
         timeOneLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(80)
-            make.right.equalToSuperview()
+            make.left.equalTo(nameOneLabel).offset(120)
             make.width.height.equalTo(numberOneLabel)
         }
         
@@ -223,6 +255,22 @@ class RecordsViewController: UIViewController {
             make.height.width.equalTo(30)
         }
         
+        
+        boardContainer.addSubview(dataLabel)
+        dataLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.right.equalToSuperview().inset(40)
+            make.height.equalTo(30)
+            make.width.equalTo(40)
+        }
+        
+        boardContainer.addSubview(dataLabelPlayerOne)
+        dataLabelPlayerOne.snp.makeConstraints { make in
+            make.right.equalToSuperview().inset(16)
+            make.centerY.equalTo(timeOneLabel)
+            make.height.equalTo(50)
+            make.width.equalTo(80)
+        }
         
         
                 
@@ -239,6 +287,7 @@ class RecordsViewController: UIViewController {
         buttonBack.addAction(backButtonAction, for: .touchUpInside)
         
         
+        
     }
     
     
@@ -251,7 +300,7 @@ class RecordsViewController: UIViewController {
     
     
     
-    
+    // - MARK: Load records to UI
     func loadAndDisplayRecords() {
         records = manager.loadRecords()
         records.sort { $0.time > $1.time }
@@ -260,6 +309,7 @@ class RecordsViewController: UIViewController {
             let first = records[0]
             nameOneLabel.text = first.playerName
             timeOneLabel.text = "\(first.time)"
+            dataLabelPlayerOne.text = recordDateFormater.string(from: first.date) // получаем дату и время
         }
         
         if records.count > 1 {
@@ -269,6 +319,20 @@ class RecordsViewController: UIViewController {
         }
         
     }
+    
+    
+    
+    
+   
+//    @objc func dateChanged( _ sender: UIDatePicker) {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "MM-dd-yyyy HH:mm"
+//        let string = formatter.string(from: sender.date)
+//        label.text = string 
+//    }
+    
+    
+    
     
 }
 
