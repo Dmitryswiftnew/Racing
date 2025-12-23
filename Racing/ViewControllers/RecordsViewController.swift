@@ -262,14 +262,14 @@ class RecordsViewController: UIViewController {
             make.right.equalToSuperview().inset(40)
             make.height.equalTo(30)
             make.width.equalTo(40)
-        }
-        
-        boardContainer.addSubview(dataLabelPlayerOne)
-        dataLabelPlayerOne.snp.makeConstraints { make in
-            make.right.equalToSuperview().inset(16)
-            make.centerY.equalTo(timeOneLabel)
-            make.height.equalTo(50)
-            make.width.equalTo(80)
+            }
+            
+            boardContainer.addSubview(dataLabelPlayerOne)
+            dataLabelPlayerOne.snp.makeConstraints { make in
+                make.right.equalToSuperview().inset(16)
+                make.centerY.equalTo(timeOneLabel)
+                make.height.equalTo(50)
+                make.width.equalTo(80)
         }
         
         

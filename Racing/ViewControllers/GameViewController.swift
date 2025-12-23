@@ -119,6 +119,12 @@ class GameViewController: UIViewController {
         return view
     }()
     
+    private let tearsImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "tears")
+        return view
+    }()
+    
     private let leftContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -219,7 +225,7 @@ class GameViewController: UIViewController {
         
         rightContainer.addSubview(markImageView)
         markImageView.snp.makeConstraints { make in
-            make.top.equalTo(rightContainer).offset(300)
+            make.bottom.equalTo(roadImage.snp.top).offset(50)
             make.centerX.equalTo(rightContainer)
             make.width.equalTo(60)
             make.height.equalTo(160)
@@ -227,12 +233,19 @@ class GameViewController: UIViewController {
         
         leftContainer.addSubview(binImageView)
         binImageView.snp.makeConstraints { make in
-            make.top.equalTo(leftContainer).offset(100)
+            make.bottom.equalTo(roadImageSecond.snp.bottom).offset(50)
             make.centerX.equalTo(leftContainer)
             make.width.equalTo(60)
             make.height.equalTo(120)
         }
         
+        roadImageSecond.addSubview(tearsImageView)
+        tearsImageView.snp.makeConstraints { make in
+            make.bottom.equalTo(roadImageSecond.snp.bottom).inset(150)
+            make.centerX.equalTo(leftContainer)
+            make.width.equalTo(60)
+            make.height.equalTo(120)
+        }
         
         
         view.addSubview(buttonBack)
@@ -400,6 +413,7 @@ class GameViewController: UIViewController {
             gameTimer.invalidate()
             self.saveRaceRecord()
             self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: { self.restGame()})
+            self.pauseGame()
             return
         }
         carImageView.image = UIImage(named: "CarCamaroNewLeft")
@@ -418,6 +432,7 @@ class GameViewController: UIViewController {
                 self.gameTimer.invalidate()
                 self.saveRaceRecord()
                 self.showAlert(title: "ФИАСКО БРАТАН", message: "Хочешь перезагрузить игру?", onOK: {self.restGame()})
+                self.pauseGame()
                 return
             }
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveLinear) {
@@ -442,7 +457,7 @@ class GameViewController: UIViewController {
         }
     }
     
-    func rightLongPressed() {              // buuton right
+    func rightLongPressed() {              // buton right
         let action = UIAction { _ in
             self.rightMove()
         }
@@ -502,6 +517,14 @@ class GameViewController: UIViewController {
         self.carTimer.invalidate()
         self.carImageView.center.x += 0
     }
+    
+    
+    func pauseGame() {
+        self.view.subviews.forEach({$0.layer.removeAllAnimations()})
+            self.view.layer.removeAllAnimations()
+            self.view.layoutIfNeeded()
+    }
+    
     // - MARK: Restart game
     func restGame() {
         carImageView.center.x = mainConteiner.center.x
