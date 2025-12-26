@@ -6,12 +6,22 @@ class GameViewController: UIViewController {
     
     private var gameTimer = Timer()
     private var carTimer = Timer()
-    private var roadTimer = Timer()
+//    private var roadTimer = Timer()
     private var carStepSlowX: CGFloat = 30
     private var carStep: CGFloat = 5
     private var stepForRoad: CGFloat = 5.0
     
 
+//    private var roadAnimationTimer: Timer?
+    private var isGamePaused = false
+//    private var roadImageY1: CGFloat = 0  // позиция первой дороги
+//    private var roadImageY2: CGFloat = -UIScreen.main.bounds.height  // позиция второй дороги
+    
+    private var displayLink: CADisplayLink?
+    private var roadImageY1: CGFloat = 0
+    private var roadImageY2: CGFloat = 0
+    
+    
     private let buttonBack: UIButton = {
         let button = UIButton()
         button.setTitle("Back", for: .normal)
@@ -127,16 +137,16 @@ class GameViewController: UIViewController {
     
     private let leftContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
-        view.alpha = 0.3
+//        view.backgroundColor = .red
+//        view.alpha = 0.4
         return view
     }()
     
     
     private let rightContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
-        view.alpha = 0.3
+//        view.backgroundColor = .red
+//        view.alpha = 0.4
         return view
     }()
     
@@ -144,6 +154,14 @@ class GameViewController: UIViewController {
         let view = UIView()
         //        view.backgroundColor = .white
         //        view.alpha = 0.1
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    private let roadContainer: UIView = {
+        let view = UIView()
+//        view.backgroundColor = .red
+//        view.alpha = 0.1
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -179,30 +197,42 @@ class GameViewController: UIViewController {
         let playerName = settings?.name ?? "Player"
         
         //MARK: - Road
+//        view.addSubview(roadImage)
+//        roadImage.image = UIImage(named: "roadE")
+//        roadImage.snp.makeConstraints { make in
+////            make.top.equalToSuperview()
+//            make.left.right.equalToSuperview()
+//            make.height.equalToSuperview()
+//        }
+//        
+//        view.addSubview(roadImageSecond)
+//        roadImageSecond.image = UIImage(named: "roadE")
+//        roadImageSecond.snp.makeConstraints { make in
+////            make.top.equalTo(roadImage.snp.bottom)
+////            make.right.left.equalToSuperview()
+////            make.height.equalToSuperview()
+////            
+////            make.bottom.equalTo(view.snp.top)
+//            make.height.equalToSuperview()
+//            make.width.equalToSuperview()
+//        }
+        
+        
         view.addSubview(roadImage)
         roadImage.image = UIImage(named: "roadE")
-        roadImage.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.height.equalToSuperview()
-        }
-        
+        roadImage.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+
         view.addSubview(roadImageSecond)
         roadImageSecond.image = UIImage(named: "roadE")
-        roadImageSecond.snp.makeConstraints { make in
-//            make.top.equalTo(roadImage.snp.bottom)
-//            make.right.left.equalToSuperview()
-//            make.height.equalToSuperview()
-//            
-            make.bottom.equalTo(view.snp.top)
-            make.height.equalToSuperview()
-            make.width.equalToSuperview()
-        }
+        roadImageSecond.frame = CGRect(x: 0, y: -view.frame.height, width: view.frame.width, height: view.frame.height)
         
         view.addSubview(mainConteiner)
         mainConteiner.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+     
+        
         
         mainConteiner.addSubview(startTimeLabel)
         startTimeLabel.snp.makeConstraints { make in
@@ -223,29 +253,48 @@ class GameViewController: UIViewController {
             make.width.equalTo(mainConteiner).multipliedBy(1.0/6.0)
         }
         
+        
+        
+        
+        
+        
         rightContainer.addSubview(markImageView)
-        markImageView.snp.makeConstraints { make in
-            make.bottom.equalTo(roadImage.snp.top).offset(50)
-            make.centerX.equalTo(rightContainer)
-            make.width.equalTo(60)
-            make.height.equalTo(160)
-        }
+        markImageView.frame = CGRect(x: 0, y: -300, width: 60, height: 160)
+        
+        
+//        markImageView.snp.makeConstraints { make in
+//            make.bottom.equalTo(mainConteiner).offset(-100)  //  mainConteiner
+////            make.bottom.equalTo(roadImage.snp.top).offset(50)
+//            make.centerX.equalTo(rightContainer)
+//            make.width.equalTo(60)
+//            make.height.equalTo(160)
+//        }
         
         leftContainer.addSubview(binImageView)
-        binImageView.snp.makeConstraints { make in
-            make.bottom.equalTo(roadImageSecond.snp.bottom).offset(50)
-            make.centerX.equalTo(leftContainer)
-            make.width.equalTo(60)
-            make.height.equalTo(120)
-        }
+        binImageView.frame = CGRect(x: 0, y: -200, width: 60, height: 120)
         
-        roadImageSecond.addSubview(tearsImageView)
-        tearsImageView.snp.makeConstraints { make in
-            make.bottom.equalTo(roadImageSecond.snp.bottom).inset(150)
-            make.centerX.equalTo(leftContainer)
-            make.width.equalTo(60)
-            make.height.equalTo(120)
-        }
+        
+        
+//        binImageView.snp.makeConstraints { make in
+//            make.bottom.equalTo(mainConteiner).offset(-100)  // mainConteiner
+////            make.bottom.equalTo(roadImageSecond.snp.bottom).offset(50)
+//            make.centerX.equalTo(leftContainer)
+//            make.width.equalTo(60)
+//            make.height.equalTo(120)
+//        }
+        
+        
+        roadContainer.addSubview(tearsImageView)  //   к mainConteiner
+        tearsImageView.frame = CGRect(x: 0, y: -400, width: 60, height: 120)
+        
+////        roadImageSecond.addSubview(tearsImageView)
+//        tearsImageView.snp.makeConstraints { make in
+//            make.bottom.equalTo(mainConteiner).offset(-200)  //  mainConteiner
+////            make.bottom.equalTo(roadImageSecond.snp.bottom).inset(150)
+//            make.centerX.equalTo(leftContainer)
+//            make.width.equalTo(60)
+//            make.height.equalTo(120)
+//        }
         
         
         view.addSubview(buttonBack)
@@ -262,7 +311,15 @@ class GameViewController: UIViewController {
         buttonBack.addAction(buttonBackAction, for: .touchUpInside)
         
         //MARK: - Container buttons
-        mainConteiner.addSubview(buttonContainerView)
+        mainConteiner.addSubview(roadContainer)
+        roadContainer.snp.makeConstraints { make in
+            make.top.bottom.equalTo(mainConteiner)
+            make.left.equalTo(leftContainer.snp.right)
+            make.right.equalTo(rightContainer.snp.left)
+            
+        }
+        
+        roadContainer.addSubview(buttonContainerView)
         buttonContainerView.snp.makeConstraints { make in
             make.left.right.equalTo(mainConteiner).inset(60)
             make.bottom.equalTo(mainConteiner).inset(20)
@@ -283,6 +340,8 @@ class GameViewController: UIViewController {
             //
         }
         
+        
+       
         
         mainConteiner.addSubview(carImageView)
         carImageView.snp.makeConstraints { make in
@@ -336,35 +395,123 @@ class GameViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    func roadAnimate() {
-        self.roadImage.snp.remakeConstraints { make in
-            make.top.equalTo(view.snp.bottom)
-            make.height.equalToSuperview()
-            make.width.equalToSuperview()
-        }
-        self.roadImageSecond.snp.remakeConstraints { make in
-            make.left.equalToSuperview()
-            make.top.equalToSuperview()
-            make.right.equalToSuperview()
-            make.height.equalToSuperview()
-        }
-        UIView.animate(withDuration: 3,
-                       delay: 0,
-                       options: [.curveLinear, .repeat]) {
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.roadImage.snp.remakeConstraints { make in
-                make.left.equalToSuperview()
-                make.top.equalToSuperview()
-                make.right.equalToSuperview()
-            }
-            self.roadImageSecond.snp.remakeConstraints { make in
-                make.bottom.equalTo(self.view.snp.top)
-                make.height.equalToSuperview()
-                make.width.equalToSuperview()
-            }
-        }
+//    func startRoadAnimation() {
+//        roadAnimationTimer?.invalidate()
+//        
+//        roadImageY1 = 0
+//        roadImageY2 = -view.frame.height  // высота экрана
+//        
+//        updateRoadPositions()
+//        
+//        roadAnimationTimer = Timer.scheduledTimer(withTimeInterval: 1.0/120.0, repeats: true) { [weak self] _ in  // 120 FPS
+//            guard let self = self, !self.isGamePaused else { return }
+//            
+//            self.updateRoadPosition()
+//        }
+//    }
+
+    func startRoadAnimation() {
+        displayLink?.invalidate()
+        
+        roadImageY1 = 0
+        roadImageY2 = -view.frame.height
+        updateRoadPositions()
+        
+        // CADisplayLink = ТОЧНО 120 FPS, синхронно с экраном
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+        displayLink?.add(to: .main, forMode: .default)
     }
+    
+    @objc private func displayLinkDidFire(_ displayLink: CADisplayLink) {
+        guard !isGamePaused else { return }
+        
+        let speed: CGFloat = 10.0  //  плавная скорость
+        
+        roadImageY1 += speed
+        roadImageY2 += speed
+        
+        if roadImageY1 >= view.frame.height {
+            roadImageY1 = roadImageY2 - view.frame.height
+        }
+        if roadImageY2 >= view.frame.height {
+            roadImageY2 = roadImageY1 - view.frame.height
+        }
+        
+        updateRoadPositions()
+        
+        binImageView.frame.origin.y += speed
+        markImageView.frame.origin.y += speed
+        tearsImageView.frame.origin.y += speed
+        
+        if binImageView.frame.origin.y >= leftContainer.frame.height + 100 {
+            binImageView.frame.origin.y = CGFloat.random(in: -400 ... -20)
+        }
+        if markImageView.frame.origin.y >= rightContainer.frame.height + 100 {
+            markImageView.frame.origin.y = CGFloat.random(in: -300 ... -10)
+        }
+        if tearsImageView.frame.origin.y >= roadContainer.frame.height + 100 {
+            tearsImageView.frame.origin.y = CGFloat.random(in: -500 ... -5)
+            tearsImageView.frame.origin.x = CGFloat.random(in: 0 ... roadContainer.frame.width - tearsImageView.frame.width)
+        }
+        
+        
+        
+    }
+    
+//    private func updateRoadPosition() {
+//        let speed: CGFloat = 0.8  //  МАЛЕНЬКАЯ скорость
+//        
+//        roadImageY1 += speed
+//        roadImageY2 += speed
+//        
+//        //  ТОЧНАЯ проверка границ
+//        if roadImageY1 >= view.frame.height {
+//            roadImageY1 = roadImageY2 - view.frame.height
+//        }
+//        if roadImageY2 >= view.frame.height {
+//            roadImageY2 = roadImageY1 - view.frame.height
+//        }
+//        
+//        updateRoadPositions()
+//    }
+
+    
+    
+    private func updateRoadPositions() {
+        roadImage.frame.origin.y = roadImageY1
+        roadImageSecond.frame.origin.y = roadImageY2
+    }
+
+    
+//    func roadAnimate() {
+//        self.roadImage.snp.remakeConstraints { make in
+//            make.top.equalTo(view.snp.bottom)
+//            make.height.equalToSuperview()
+//            make.width.equalToSuperview()
+//        }
+//        self.roadImageSecond.snp.remakeConstraints { make in
+//            make.left.equalToSuperview()
+//            make.top.equalToSuperview()
+//            make.right.equalToSuperview()
+//            make.height.equalToSuperview()
+//        }
+//        UIView.animate(withDuration: 3,
+//                       delay: 0,
+//                       options: [.curveLinear, .repeat]) {
+//            self.view.layoutIfNeeded()
+//        } completion: { _ in
+//            self.roadImage.snp.remakeConstraints { make in
+//                make.left.equalToSuperview()
+//                make.top.equalToSuperview()
+//                make.right.equalToSuperview()
+//            }
+//            self.roadImageSecond.snp.remakeConstraints { make in
+//                make.bottom.equalTo(self.view.snp.top)
+//                make.height.equalToSuperview()
+//                make.width.equalToSuperview()
+//            }
+//        }
+//    }
     
  
     // - MARK: Move road
@@ -395,6 +542,7 @@ class GameViewController: UIViewController {
 //    }
     
     
+    // - MARK: Control car
     
     func leftLongPressed() {  //  Button left
         let action = UIAction { _ in
@@ -518,20 +666,63 @@ class GameViewController: UIViewController {
         self.carImageView.center.x += 0
     }
     
+//    // НОВЫЙ pauseGame():
+//    func pauseGame() {
+//        isGamePaused = true
+//        
+//        // Останавливаем ВСЕ таймеры
+//        gameTimer.invalidate()
+//        carTimer.invalidate()
+//        roadAnimationTimer?.invalidate()
+//        
+//        // Останавливаем layer анимации (на всякий случай)
+//        recursivelyStopAnimations(view)
+//    }
+
+    // - MARK: Pause game
     
     func pauseGame() {
-        self.view.subviews.forEach({$0.layer.removeAllAnimations()})
-            self.view.layer.removeAllAnimations()
-            self.view.layoutIfNeeded()
+        isGamePaused = true
+        displayLink?.invalidate()  // мгновенная остановка!
+        gameTimer.invalidate()
+        carTimer.invalidate()
+        recursivelyStopAnimations(view)
     }
     
+    private func recursivelyStopAnimations(_ view: UIView) {
+        view.layer.removeAllAnimations()
+        for subview in view.subviews {
+            recursivelyStopAnimations(subview)
+        }
+    }
+    
+//    func pauseGame() {
+//        self.view.subviews.forEach({$0.layer.removeAllAnimations()})
+//            self.view.layer.removeAllAnimations()
+//            self.view.layoutIfNeeded()
+//    }
+    
     // - MARK: Restart game
+//    func restGame() {
+//        carImageView.center.x = mainConteiner.center.x
+//        numberOfTime.text = "0"
+//        numberOfScore.text = "0"
+//        startTimeCount()
+//    }
+    
     func restGame() {
+        isGamePaused = false  // Возобновляем
+        
+        // Сброс позиции машины и счётчиков
         carImageView.center.x = mainConteiner.center.x
         numberOfTime.text = "0"
         numberOfScore.text = "0"
+
         startTimeCount()
     }
+    
+    
+    
     
     // MARK: Timer
     
@@ -571,7 +762,7 @@ class GameViewController: UIViewController {
                 timer.invalidate()
                 self.startTimeLabel.isHidden = true
                 self.mainTimeCount()
-                self.roadAnimate()
+                self.startRoadAnimation()
             }
         }
         

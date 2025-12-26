@@ -138,7 +138,7 @@ class SettingsViewController: UIViewController {
     }()
     
     private let saveManager = SaveLoadManager()
-    private var playerSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin")
+    private var playerSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin", speedGame: 5.0)
     //    private var playerSettings: PlayerSettings? = nil
     
     override func viewDidLoad() {
@@ -364,7 +364,7 @@ class SettingsViewController: UIViewController {
             
         } else {
             
-            let defaultSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin")
+            let defaultSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin", speedGame: 5.0)
             self.playerSettings = defaultSettings
             nameTextField.text = defaultSettings.name
             carImage.image = UIImage(named: defaultSettings.carName)
@@ -380,7 +380,7 @@ class SettingsViewController: UIViewController {
         let carName = playerSettings.carName
         let objectName = playerSettings.objectName
         
-        let settings = PlayerSettings(name: name, carName: carName, objectName: objectName)
+        let settings = PlayerSettings(name: name, carName: carName, objectName: objectName, speedGame: 5.0)
         saveManager.saveSettings(settings)
         self.playerSettings = settings
     }
