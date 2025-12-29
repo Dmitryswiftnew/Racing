@@ -14,7 +14,7 @@ final class PlayerSettings: Codable {
     
     
     convenience init() {
-        self.init(name: "Player", carName: "camaro", objectName: "bin", speedGame: 5.0)
+        self.init(name: "Player", carName: "CarCamaroNewSnadow", objectName: "Police", speedGame: 5.0)
     }
     
     init(name: String, carName: String, objectName: String, speedGame: Double) {
