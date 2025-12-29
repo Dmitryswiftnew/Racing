@@ -6,8 +6,8 @@ import SnapKit
 class SettingsViewController: UIViewController {
     
     let screenHeight = UIScreen.main.bounds.height
-    private let availableCars = ["CarCamaro", "Mustang", "P"]
-    private let availableObjects = ["bin", "mark100"]
+    private let availableCars = ["CarCamaroNewSnadow", "Mustang", "Porsh"]
+    private let availableObjects = ["Police", "Truck"]
     
     private var currentCarIndex = 0
     private var currentObjectIndex = 0
@@ -138,7 +138,7 @@ class SettingsViewController: UIViewController {
     }()
     
     private let saveManager = SaveLoadManager()
-    private var playerSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin", speedGame: 5.0)
+    private var playerSettings = PlayerSettings(name: "Player", carName: "CarCamaroNewSnadow", objectName: "Police", speedGame: 5.0)
     //    private var playerSettings: PlayerSettings? = nil
     
     override func viewDidLoad() {
@@ -364,7 +364,7 @@ class SettingsViewController: UIViewController {
             
         } else {
             
-            let defaultSettings = PlayerSettings(name: "Player", carName: "CarCamaro", objectName: "bin", speedGame: 5.0)
+            let defaultSettings = PlayerSettings(name: "Player", carName: "CarCamaroNewSnadow", objectName: "Police", speedGame: 5.0)
             self.playerSettings = defaultSettings
             nameTextField.text = defaultSettings.name
             carImage.image = UIImage(named: defaultSettings.carName)
@@ -458,15 +458,10 @@ class SettingsViewController: UIViewController {
         currentObjectIndex = (currentObjectIndex + 1) % availableObjects.count
         playerSettings.objectName = availableObjects[currentObjectIndex]
         objectImage.image = UIImage(named: playerSettings.objectName)
+        
     }
-    
-    
-    
+
 }
-
-
-
-
 
 
 extension SettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
