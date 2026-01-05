@@ -13,6 +13,9 @@ class SettingsViewController: UIViewController {
     private var currentObjectIndex = 0
     
     
+    private lazy var difficultyView = DifficultySelectorView()
+    
+    
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let backImage = UIImage(systemName: "chevron.left")
@@ -27,8 +30,8 @@ class SettingsViewController: UIViewController {
     
     private let mainContainerView: UIView = {
         let view = UIView()
-        //        view.backgroundColor = .lightGray
-        //        view.alpha = 0.3
+//                view.backgroundColor = .lightGray
+//                view.alpha = 0.3
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -51,7 +54,7 @@ class SettingsViewController: UIViewController {
     private let buttonCarLeft: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("←", for: .normal)
-        button.setTitleColor(.yellow, for: .normal)
+        button.setTitleColor(.orange, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         return button
     }()
@@ -59,7 +62,7 @@ class SettingsViewController: UIViewController {
     private let buttonCarRight: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("→", for: .normal)
-        button.setTitleColor(.yellow, for: .normal)
+        button.setTitleColor(.orange, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         return button
     }()
@@ -74,7 +77,7 @@ class SettingsViewController: UIViewController {
     private let buttonObjectLeft: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("←", for: .normal)
-        button.setTitleColor(.yellow, for: .normal)
+        button.setTitleColor(.orange, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         return button
     }()
@@ -82,7 +85,7 @@ class SettingsViewController: UIViewController {
     private let buttonObjectRight: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("→", for: .normal)
-        button.setTitleColor(.yellow, for: .normal)
+        button.setTitleColor(.orange, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         return button
     }()
@@ -105,6 +108,13 @@ class SettingsViewController: UIViewController {
         let view = UIView()
 //        view.backgroundColor = .green
 //        view.alpha = 0.3
+        return view
+    }()
+    
+    private let difficultyContainer: UIView = {
+        let view = UIView()
+//                view.backgroundColor = .red
+//                view.alpha = 0.3
         return view
     }()
     
@@ -186,10 +196,10 @@ class SettingsViewController: UIViewController {
         
         mainContainerView.addSubview(profileConteiner)
         profileConteiner.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(screenHeight / 6)
+            make.top.equalToSuperview().inset(screenHeight / 8)
             make.left.equalToSuperview().offset(16)
             make.right.equalToSuperview().inset(16)
-            make.height.equalTo(screenHeight / 4)
+            make.height.equalTo(screenHeight / 5)
         }
         
         
@@ -231,6 +241,26 @@ class SettingsViewController: UIViewController {
             make.right.equalTo(carConteiner)
             make.left.equalTo(carConteiner)
             make.height.equalTo(carConteiner)
+        }
+        
+        mainContainerView.addSubview(difficultyView)
+        difficultyView.snp.makeConstraints { make in
+            make.top.equalTo(roadObjectContainer.snp.bottom)
+            make.right.left.equalTo(roadObjectContainer)
+            make.height.equalTo(80)
+        }
+        
+        
+        difficultyView.onSpeedChanged = { [weak self] speed in
+            self?.playerSettings.speedGame = speed
+            
+        }
+        
+        let savedSettings = saveManager.loadSettings()
+        if let savedSpeed = savedSettings?.speedGame {
+            let speedIndex = [3.0, 5.0, 8.0].firstIndex(of: savedSpeed) ?? 1
+            difficultyView.selectedIndex = speedIndex
+            playerSettings.speedGame = savedSpeed
         }
         
         
@@ -361,6 +391,11 @@ class SettingsViewController: UIViewController {
             currentCarIndex = availableCars.firstIndex(of: settings.carName) ?? 0
             currentObjectIndex = availableObjects.firstIndex(of: settings.objectName) ?? 0
             
+            let speeds = [3.0, 5.0, 8.0]
+            if let speedIndex = speeds.firstIndex(of: settings.speedGame) {
+                difficultyView.selectedIndex = speedIndex
+            }
+            
             
         } else {
             
@@ -379,10 +414,14 @@ class SettingsViewController: UIViewController {
         
         let carName = playerSettings.carName
         let objectName = playerSettings.objectName
+        let speedGame = playerSettings.speedGame
         
-        let settings = PlayerSettings(name: name, carName: carName, objectName: objectName, speedGame: 5.0)
-        saveManager.saveSettings(settings)
+        let settings = PlayerSettings(name: name, carName: carName, objectName: objectName, speedGame: speedGame)
+       
         self.playerSettings = settings
+        saveManager.saveSettings(settings)
+        print(settings.speedGame)
+        
     }
     
     
