@@ -1,6 +1,7 @@
 
 import Foundation
 import UIKit
+import SnapKit
 
 class GameViewController: UIViewController {
     
@@ -9,7 +10,8 @@ class GameViewController: UIViewController {
 //    private var roadTimer = Timer()
     private var carStepSlowX: CGFloat = 30
     private var carStep: CGFloat = 5
-    private var stepForRoad: CGFloat = 5.0
+//    private var stepForRoad: CGFloat = 5.0
+    
     
 
 //    private var roadAnimationTimer: Timer?
@@ -20,6 +22,9 @@ class GameViewController: UIViewController {
     private var displayLink: CADisplayLink?
     private var roadImageY1: CGFloat = 0
     private var roadImageY2: CGFloat = 0
+    
+    private var carBaseName: String = "CaCarCamaroNewSnadow"
+    private var hasAnimation: Bool = true
     
     
     private let buttonBack: UIButton = {
@@ -194,6 +199,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         cofigureUI()
+        loadGameSettings()
         leftLongPressed()
         rightLongPressed()
         startTimeCount()
@@ -205,6 +211,7 @@ class GameViewController: UIViewController {
     private func cofigureUI() {
         view.backgroundColor = .systemBackground
         
+                
         let settings = saveManager.loadSettings()
         let playerName = settings?.name ?? "Player"
         
@@ -386,7 +393,8 @@ class GameViewController: UIViewController {
     @objc private func displayLinkDidFire(_ displayLink: CADisplayLink) {
         guard !isGamePaused else { return }
         
-        let speed: CGFloat = 5.0  //  плавная скорость
+        let settings = saveManager.loadSettings()
+        let speed: CGFloat = settings?.speedGame ?? 5.0
         
         roadImageY1 += speed
         roadImageY2 += speed
@@ -455,11 +463,15 @@ class GameViewController: UIViewController {
             self.crashGame()
             return
         }
-        carImageView.image = UIImage(named: "CarCamaroNewLeft")
+        
+        if hasAnimation {
+            carImageView.image = UIImage(named: "\(carBaseName.dropLast(6))Left")
+        }
+        
         UIView.animate(withDuration: 0.3) {
             self.carImageView.center.x = newX
         } completion: { _ in
-            self.carImageView.image = UIImage(named: "CarCamaroNewSnadow") // назад возврат тачки
+            self.carImageView.image = UIImage(named: self.carBaseName) // назад возврат тачки
         }
         
     }
@@ -483,10 +495,12 @@ class GameViewController: UIViewController {
         switch gesture.state {
         case.began:
             self.carMoveLeftActionLine()
-            carImageView.image = UIImage(named: "CarCamaroNewLeft")
+            if hasAnimation {
+                carImageView.image = UIImage(named: "\(carBaseName.dropLast(6))Left")
+            }
         case .ended, .cancelled, .failed, .changed:
             self.carStopForControl()
-            self.carImageView.image = UIImage(named: "CarCamaroNewSnadow")
+            self.carImageView.image = UIImage(named: carBaseName)
         default:
             break
         }
@@ -508,11 +522,15 @@ class GameViewController: UIViewController {
             self.crashGame()
             return
         }
-        carImageView.image = UIImage(named: "CarCamaroNewRight")
+        
+        if hasAnimation {
+            carImageView.image = UIImage(named: "\(carBaseName.dropLast(6))Right")
+        }
+        
         UIView.animate(withDuration: 0.3) {
             self.carImageView.center.x = newX
         } completion: { _ in
-            self.carImageView.image = UIImage(named: "CarCamaroNewSnadow")
+            self.carImageView.image = UIImage(named: self.carBaseName)
         }
     }
     
@@ -536,10 +554,12 @@ class GameViewController: UIViewController {
         switch gesture.state {
         case .began:
             self.carMoveRightActionLine()
-            carImageView.image = UIImage(named: "CarCamaroNewRight")
+            if hasAnimation {
+                carImageView.image = UIImage(named: "\(carBaseName.dropLast(6))Right")
+            }
         case .ended, .cancelled, .failed, .changed:
             self.carStopForControl()
-            self.carImageView.image = UIImage(named: "CarCamaroNewSnadow")
+            self.carImageView.image = UIImage(named: carBaseName)
         default:
             break
         }
@@ -629,7 +649,7 @@ class GameViewController: UIViewController {
        isGamePaused = false
         // Сброс позиции машины и счётчиков
         carImageView.center.x = mainConteiner.center.x
-        carImageView.image = UIImage(named: "CarCamaroNewSnadow")
+        carImageView.image = UIImage(named: carBaseName)
         
         numberOfTime.text = "0"
         numberOfScore.text = "0"
@@ -760,5 +780,23 @@ class GameViewController: UIViewController {
         
         saveManager.saveRecords(records)
     }
+    
+    
+    // - MARK: Load settings
+    
+    private func loadGameSettings() {
+        let settings = saveManager.loadSettings() ?? PlayerSettings(name: "Player", carName: "CarCamaroNewSnadow", objectName: "Police", speedGame: 5.0)
+        
+        carImageView.image = UIImage(named: settings.carName)
+        
+        objectImageView.image = UIImage(named: settings.objectName)
+        
+        carBaseName = settings.carName
+        hasAnimation = settings.carName == "CarCamaroNewSnadow"
+        
+        print("Гружу настройки \(settings.carName), \(settings.objectName), скорость \(settings.speedGame)")
+    
+    }
+    
     
 }
