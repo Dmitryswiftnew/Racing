@@ -24,6 +24,7 @@
 		0A626C5B2EC4FA2300DBF5D5 /* RecordsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A626C5A2EC4FA2300DBF5D5 /* RecordsViewController.swift */; };
 		0A626C5D2EC4FA3100DBF5D5 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A626C5C2EC4FA3100DBF5D5 /* SettingsViewController.swift */; };
 		0A6E1C022F02DEE100A07A20 /* DifficultySelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E1C012F02DEE100A07A20 /* DifficultySelectorView.swift */; };
+		0A6E1C062F13E61C00A07A20 /* RecordsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E1C052F13E61C00A07A20 /* RecordsViewCell.swift */; };
 		0AB90D7F2F029F9B001F1A7B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AB90D7E2F029F9B001F1A7B /* Assets.xcassets */; };
 		0AEF5E672ED9F22A00EFBCD7 /* UIView+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEF5E662ED9F22A00EFBCD7 /* UIView+extension.swift */; };
 		0AEF5E902EE07CE900EFBCD7 /* UIViewController+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEF5E8F2EE07CE900EFBCD7 /* UIViewController+extension.swift */; };
@@ -48,6 +49,7 @@
 		0A626C5A2EC4FA2300DBF5D5 /* RecordsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsViewController.swift; sourceTree = "<group>"; };
 		0A626C5C2EC4FA3100DBF5D5 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		0A6E1C012F02DEE100A07A20 /* DifficultySelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultySelectorView.swift; sourceTree = "<group>"; };
+		0A6E1C052F13E61C00A07A20 /* RecordsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsViewCell.swift; sourceTree = "<group>"; };
 		0AB90D7E2F029F9B001F1A7B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0AEF5E662ED9F22A00EFBCD7 /* UIView+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extension.swift"; sourceTree = "<group>"; };
 		0AEF5E8F2EE07CE900EFBCD7 /* UIViewController+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extension.swift"; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 				0A1EDA682EE99BBD00A868F6 /* PlayerSettings.swift */,
 				0A1EDA6A2EEAE42A00A868F6 /* RaceRecord.swift */,
 				0A6E1C012F02DEE100A07A20 /* DifficultySelectorView.swift */,
+				0A6E1C052F13E61C00A07A20 /* RecordsViewCell.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				0A626C5D2EC4FA3100DBF5D5 /* SettingsViewController.swift in Sources */,
 				0A626C452EC4EFC400DBF5D5 /* MainViewController.swift in Sources */,
 				0A1EDA692EE99BBD00A868F6 /* PlayerSettings.swift in Sources */,
+				0A6E1C062F13E61C00A07A20 /* RecordsViewCell.swift in Sources */,
 				0A1EDA5F2EE96D4200A868F6 /* UserDefaults+extension.swift in Sources */,
 				0A626C412EC4EFC400DBF5D5 /* AppDelegate.swift in Sources */,
 				0AEF5E672ED9F22A00EFBCD7 /* UIView+extension.swift in Sources */,
