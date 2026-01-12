@@ -85,15 +85,15 @@ final class RecordsViewController: UIViewController {
         
     }
     
-    
     func backButtonPressed() {
         navigationController?.popViewController(animated: true)
     }
   
+    // - MARK: Load information
     
     private func loadRecords() {
         records = manager.loadRecords()
-        records.sort { $0.time < $1.time }
+        records.sort { $0.time > $1.time }
         tableView.reloadData()
     }
 }
@@ -110,7 +110,18 @@ extension RecordsViewController: UITableViewDataSource, UITableViewDelegate {
         cell.configure(with: record, position: position)
         
         return cell
-        
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            records.remove(at: indexPath.row)
+            manager.saveRecords(records)
+            tableView.deleteRows(at: [indexPath], with: .left)
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

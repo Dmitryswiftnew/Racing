@@ -97,5 +97,4 @@ final class RecordsViewCell: UITableViewCell {
         super.prepareForReuse()
         [positionLabel, playerNameLabel, timeLabel, dateLabel].forEach { $0.text = nil }
     }
-    
 }

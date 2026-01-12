@@ -70,5 +70,9 @@ final class SaveLoadManager {
         defaults.object(forKey: Keys.imageKey.rawValue) as? String
     }
     
+    func clearRecordKey() {
+        defaults.removeObject(forKey: Keys.recordsKey.rawValue)
+        print("Очищен ключ \(Keys.recordsKey.rawValue)")
+    }
     
 }
